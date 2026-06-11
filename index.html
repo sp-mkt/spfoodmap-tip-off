@@ -203,8 +203,8 @@
             <div class="step-label"><span class="step-num">6</span><span class="step-title">제보자 정보</span> <span class="optional">선택</span></div>
             <p class="step-desc">이벤트 참여 및 제보 확인을 위한 정보입니다.</p>
             <div class="info-grid">
-                <input type="text" id="company" placeholder="회사명 (예: 본사)">
-                <input type="text" id="branch" placeholder="근무 지점 (예: 선릉점)">
+                <input type="text" id="branch" placeholder="스파크플러스 지점 (예: 선릉점)">
+                <input type="text" id="company" placeholder="입주사명">
                 <input type="text" id="reporter-name" placeholder="성함">
                 <input type="text" id="contact" placeholder="연락처 (예: 010-0000-0000)">
             </div>
@@ -214,7 +214,7 @@
             <div class="step-label"><span class="step-num">7</span><span class="step-title">개인정보 수집 및 이용 동의</span></div>
             <div class="privacy-box">
                 <b>[개인정보 수집 및 이용 안내]</b><br>
-                1. 수집 항목: 회사명, 근무 지점, 성함, 연락처<br>
+                1. 수집 항목: 입주사명, 스파크플러스 지점, 성함, 연락처<br>
                 2. 수집 및 이용 목적: 맛집 제보 중복 확인, 제보 내용에 대한 문의 대응 및 제보 관련 이벤트 참여/경품 발송 목적<br>
                 3. 보유 및 이용 기간: <b>목적 달성 후 즉시 파기</b> (단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간 보관)<br>
                 * 제보자는 동의를 거부할 권리가 있으나, 거부 시 제보 이벤트 참여 및 검토 결과 안내가 제한될 수 있습니다. (맛집 제보 데이터는 지도에 비공개/익명으로 등록 가능합니다.)
@@ -456,7 +456,7 @@ $("submit-btn").onclick = async () => {
         address: state.place.address,
         company: $("company").value.trim(),
         branch: $("branch").value.trim(),
-        nickname: $("reporter-name").value.trim(), // 기존 스프레드시트 컬럼명 유지 목적 (필요시 변경 가능)
+        nickname: $("reporter-name").value.trim(),
         contact: $("contact").value.trim()
     };
     
@@ -478,21 +478,22 @@ $("submit-btn").onclick = async () => {
     }
 };
 
-// 맛집 더 제보하기 (연속 데이터 입력 및 폼 초기화 로직)
+// 맛집 더 제보하기 (연속 데이터 입력 최적화)
 $("again-btn").onclick = () => {
     state.place = null; state.category = null; state.tags = []; state.price = null;
     allTags = [...PRESET_TAGS];
     
-    // 폼 입력 필드 전면 초기화
-    $("q").value = ""; $("review").value = ""; 
-    $("company").value = ""; $("branch").value = ""; $("reporter-name").value = ""; $("contact").value = "";
-    $("privacy-agree").checked = false;
+    // 제보자 정보와 동의 내역은 초기화하지 않고 남겨둡니다.
+    $("q").value = ""; 
+    $("review").value = ""; 
     $("review-len").textContent = "0";
     $("selected-banner").classList.remove("show");
     
     renderCats(); renderTags(); renderPrices(); refresh();
     $("done").style.display = "none";
     $("form-area").style.display = "block";
+    
+    // 필수값이 비워졌으므로 버튼은 비활성화 상태로 둡니다.
     $("submit-btn").disabled = true;
     $("submit-btn").textContent = "제보하기 🚀";
     window.scrollTo({ top: 0 });
