@@ -126,7 +126,7 @@
     .submit-btn:disabled { opacity: .35; cursor: default; }
 
     .msg { margin: 12px 16px 0; padding: 12px 14px; border-radius: 10px; font-size: 13.5px; display: none; line-height: 1.5; }
-    .msg.error { display: block; background: #fff5f5; color: #e03131; border: 1px solid #ffc9c9; }
+    .msg.error { background: #fff5f5; color: #e03131; border: 1px solid #ffc9c9; }
 
     .done { display: none; text-align: center; padding: 70px 24px; }
     .done .big { font-size: 48px; }
@@ -498,7 +498,7 @@ $("again-btn").onclick = () => {
     window.scrollTo({ top: 0 });
 };
 
-function showError(msg) { const e = $("error-msg"); e.textContent = "⚠️ " + msg; e.classList.add("show"); e.style.display = "block"; }
+function showError(msg) { const e = $("error-msg"); e.textContent = "⚠️ " + msg; e.style.display = "block"; }
 function hideError() { $("error-msg").style.display = "none"; }
 function escapeHtml(s) { return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
