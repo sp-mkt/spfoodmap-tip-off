@@ -154,12 +154,11 @@
 <body>
 <div class="wrap">
 
-    <div class="header">
-        <h1>🍽️ 스슐랭 맛집 제보하기</h1>
-        <p>여러분의 '또간집'을 알려주세요!<br>검토 후 <b>스슐랭 맛집지도</b>에 등록됩니다 😋</p>
-    </div>
-
     <div id="form-area">
+        <div class="header">
+            <h1>🍽️ 스슐랭 맛집 제보하기</h1>
+            <p>여러분의 '또간집'을 알려주세요!<br>검토 후 <b>스슐랭 맛집지도</b>에 등록됩니다 😋</p>
+        </div>
 
         <div class="step">
             <div class="step-label"><span class="step-num">1</span><span class="step-title">맛집 검색</span></div>
@@ -199,7 +198,7 @@
             <p class="step-desc">어울리는 태그를 모두 골라주세요. 직접 추가할 수도 있어요. (최대 5개)</p>
             <div class="chips" id="tag-chips"></div>
             <div class="tag-add-row">
-                <input type="text" id="custom-tag" maxlength="10" placeholder="직접 입력 (예: 회식추천)">
+                <input type="text" id="custom-tag" maxlength="10" placeholder="직접 입력 (예: 회식 추천)">
                 <button id="add-tag-btn">+ 추가</button>
             </div>
         </div>
@@ -265,8 +264,8 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVOu-Doeld3CJ2_36_D
 // ─────────────────────────────────────────────
 
 const CATEGORIES = ["한식","카페","일식","중식","양식","아시안","도시락","술집"];
-const PRESET_TAGS = ["혼밥","회식","가성비","점심추천","웨이팅주의","분위기맛집","단체가능","든든한끼","매콤","디저트맛집"];
-const PRICES = ["~1만원","1~2만원","2~3만원","3만원~"];
+const PRESET_TAGS = ["혼밥가능","회식추천","가성비","데이트","웨이팅주의","점심소개팅","단체가능","예약가능","제로페이","디저트맛집"];
+const PRICES = ["~1만원","1~2만원","2~5만원","5만원~"];
 const MAX_TAGS = 5;
 
 const state = { place: null, category: null, tags: [], price: null };
@@ -425,9 +424,7 @@ $("review").addEventListener("input", () => {
     refresh();
 });
 
-// 메뉴 입력 시에도 버튼 활성화 여부와 미리보기를 갱신하도록 이벤트 추가
 $("menu").addEventListener("input", refresh);
-
 $("privacy-agree").addEventListener("change", refresh);
 
 function refresh() {
@@ -436,7 +433,7 @@ function refresh() {
         p.innerHTML = '<span class="preview-empty">맛집을 선택하면 미리보기가 나타나요</span>';
     } else {
         const review = $("review").value.trim();
-        const menu = $("menu").value.trim(); // 메뉴 값 가져오기
+        const menu = $("menu").value.trim();
         let tagsHtml = "";
         
         if (state.category) tagsHtml += '<span class="tag">' + escapeHtml(state.category) + '</span>';
@@ -445,7 +442,7 @@ function refresh() {
         
         p.innerHTML =
             '<h3 class="preview-title">' + escapeHtml(state.place.name) + '</h3>' +
-            (menu ? '<div style="font-size:13px; font-weight:600; color:#e03131; margin-bottom:6px;">🍴 ' + escapeHtml(menu) + '</div>' : '') + // 메뉴 미리보기 추가
+            (menu ? '<div style="font-size:13px; font-weight:600; color:#e03131; margin-bottom:6px;">🍴 ' + escapeHtml(menu) + '</div>' : '') +
             '<p class="preview-desc">' + (review ? '"' + escapeHtml(review) + '"' : '<span style="color:#ccc">한줄평이 여기에 표시돼요</span>') + '</p>' +
             '<div class="preview-tags">' + tagsHtml + '</div>';
     }
@@ -465,7 +462,7 @@ $("submit-btn").onclick = async () => {
         name: state.place.name,
         category: state.category,
         review: $("review").value.trim(),
-        menu: $("menu").value.trim(), // 전송할 데이터(payload)에 메뉴 항목 추가
+        menu: $("menu").value.trim(),
         tags: state.tags.map(t => "#" + t).join(" "),
         price: state.price || "",
         lat: state.place.lat,
@@ -504,7 +501,7 @@ $("again-btn").onclick = () => {
     // 제보자 정보와 동의 내역은 초기화하지 않고 남겨둡니다.
     $("q").value = ""; 
     $("review").value = ""; 
-    $("menu").value = ""; // 메뉴 입력칸도 초기화
+    $("menu").value = ""; 
     $("review-len").textContent = "0";
     $("selected-banner").classList.remove("show");
     
