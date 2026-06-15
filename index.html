@@ -28,6 +28,13 @@
     .step-title { font-size: 15px; font-weight: 700; }
     .step-desc { font-size: 12.5px; color: var(--sub); margin: 0 0 12px; line-height: 1.5; }
 
+    /* 기본 텍스트 입력창 스타일 */
+    .basic-input {
+        width: 100%; padding: 11px 14px; border: 1px solid #dee2e6; border-radius: 8px;
+        font-size: 14px; outline: none; transition: all .2s;
+    }
+    .basic-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33,37,41,.05); }
+
     .search-row { display: flex; gap: 8px; }
     .search-row input {
         flex: 1; padding: 11px 14px; border: 1px solid #dee2e6; border-radius: 8px;
@@ -93,14 +100,12 @@
         font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
     }
 
-    /* 제보자 정보 입력 그리드 */
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .info-grid input {
         width: 100%; padding: 11px 14px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 14px; outline: none;
     }
     .info-grid input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33,37,41,.05); }
 
-    /* 개인정보 수집 면책사항 */
     .privacy-box {
         background: #f8f9fa; border: 1px solid var(--line); border-radius: 8px;
         padding: 12px; font-size: 12px; color: var(--sub); max-height: 90px;
@@ -184,7 +189,13 @@
         </div>
 
         <div class="step">
-            <div class="step-label"><span class="step-num">4</span><span class="step-title">추천 태그</span></div>
+            <div class="step-label"><span class="step-num">4</span><span class="step-title">추천 메뉴</span></div>
+            <p class="step-desc">가장 추천하는 메뉴와 가격을 적어주세요.</p>
+            <input type="text" id="menu" class="basic-input" placeholder="예: 평양냉면 (15,000원)">
+        </div>
+
+        <div class="step">
+            <div class="step-label"><span class="step-num">5</span><span class="step-title">추천 태그</span></div>
             <p class="step-desc">어울리는 태그를 모두 골라주세요. 직접 추가할 수도 있어요. (최대 5개)</p>
             <div class="chips" id="tag-chips"></div>
             <div class="tag-add-row">
@@ -194,12 +205,12 @@
         </div>
 
         <div class="step">
-            <div class="step-label"><span class="step-num">5</span><span class="step-title">1인 가격대</span></div>
+            <div class="step-label"><span class="step-num">6</span><span class="step-title">1인 가격대</span></div>
             <div class="chips" id="price-chips"></div>
         </div>
 
         <div class="step">
-            <div class="step-label"><span class="step-num">6</span><span class="step-title">제보자 정보</span></div>
+            <div class="step-label"><span class="step-num">7</span><span class="step-title">제보자 정보</span></div>
             <p class="step-desc">이벤트 참여 및 제보 확인을 위한 정보입니다.</p>
             <div class="info-grid">
                 <input type="text" id="branch" placeholder="스파크플러스 지점 (예: 선릉점)">
@@ -210,7 +221,7 @@
         </div>
 
         <div class="step">
-            <div class="step-label"><span class="step-num">7</span><span class="step-title">개인정보 수집 및 이용 동의</span></div>
+            <div class="step-label"><span class="step-num">8</span><span class="step-title">개인정보 수집 및 이용 동의</span></div>
             <div class="privacy-box">
                 <b>[개인정보 수집 및 이용 안내]</b><br>
                 1. 수집 항목: 입주사명, 스파크플러스 지점, 성함, 연락처<br>
@@ -414,6 +425,9 @@ $("review").addEventListener("input", () => {
     refresh();
 });
 
+// 메뉴 입력 시에도 버튼 활성화 여부와 미리보기를 갱신하도록 이벤트 추가
+$("menu").addEventListener("input", refresh);
+
 $("privacy-agree").addEventListener("change", refresh);
 
 function refresh() {
@@ -422,19 +436,23 @@ function refresh() {
         p.innerHTML = '<span class="preview-empty">맛집을 선택하면 미리보기가 나타나요</span>';
     } else {
         const review = $("review").value.trim();
+        const menu = $("menu").value.trim(); // 메뉴 값 가져오기
         let tagsHtml = "";
+        
         if (state.category) tagsHtml += '<span class="tag">' + escapeHtml(state.category) + '</span>';
         if (state.price) tagsHtml += '<span class="tag">' + escapeHtml(state.price) + '</span>';
         state.tags.forEach(t => tagsHtml += '<span class="tag">#' + escapeHtml(t) + '</span>');
+        
         p.innerHTML =
             '<h3 class="preview-title">' + escapeHtml(state.place.name) + '</h3>' +
+            (menu ? '<div style="font-size:13px; font-weight:600; color:#e03131; margin-bottom:6px;">🍴 ' + escapeHtml(menu) + '</div>' : '') + // 메뉴 미리보기 추가
             '<p class="preview-desc">' + (review ? '"' + escapeHtml(review) + '"' : '<span style="color:#ccc">한줄평이 여기에 표시돼요</span>') + '</p>' +
             '<div class="preview-tags">' + tagsHtml + '</div>';
     }
     
-    // 필수 조건 체크 (장소, 카테고리, 한줄평, 최소 1개 이상의 태그, 필수 개인정보 동의)
+    // 필수 조건 체크 (장소, 카테고리, 한줄평, 메뉴, 최소 1개 이상의 태그, 필수 개인정보 동의)
     const isPrivacyAgreed = $("privacy-agree").checked;
-    $("submit-btn").disabled = !(state.place && state.category && $("review").value.trim() && state.tags.length > 0 && isPrivacyAgreed);
+    $("submit-btn").disabled = !(state.place && state.category && $("review").value.trim() && $("menu").value.trim() && state.tags.length > 0 && isPrivacyAgreed);
 }
 
 $("submit-btn").onclick = async () => {
@@ -447,6 +465,7 @@ $("submit-btn").onclick = async () => {
         name: state.place.name,
         category: state.category,
         review: $("review").value.trim(),
+        menu: $("menu").value.trim(), // 전송할 데이터(payload)에 메뉴 항목 추가
         tags: state.tags.map(t => "#" + t).join(" "),
         price: state.price || "",
         lat: state.place.lat,
@@ -485,6 +504,7 @@ $("again-btn").onclick = () => {
     // 제보자 정보와 동의 내역은 초기화하지 않고 남겨둡니다.
     $("q").value = ""; 
     $("review").value = ""; 
+    $("menu").value = ""; // 메뉴 입력칸도 초기화
     $("review-len").textContent = "0";
     $("selected-banner").classList.remove("show");
     
