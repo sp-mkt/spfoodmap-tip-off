@@ -226,7 +226,7 @@
                 1. 수집 항목: 입주사명, 스파크플러스 지점, 성함, 연락처<br>
                 2. 수집 및 이용 목적: 맛집 제보 중복 확인, 제보 내용에 대한 문의 대응 및 제보 관련 이벤트 참여/경품 발송 목적<br>
                 3. 보유 및 이용 기간: <b>목적 달성 후 즉시 파기</b> (단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간 보관)<br>
-                * 제보자는 동의를 거부할 권리가 있으나, 거부 시 제보 이벤트 참여 및 검토 결과 안내가 제한될 수 있습니다. (맛집 제보 데이터는 지도에 비공개/익명으로 등록 가능합니다.)
+                * 제보자는 동의를 거부할 권리가 있으나, 거부 시 제보 이벤트 참여 및 검토 결과 안내가 제한될 수 있습니다. (개인정보는 맛집 지도에 노출되지 않습니다.)
             </div>
             <label class="agree-label">
                 <input type="checkbox" id="privacy-agree">
@@ -259,7 +259,7 @@
 
 <script>
 // ─────────────────────────────────────────────
-// ★ 설정: Apps Script 배포 후 발급되는 웹 앱 URL을 붙여넣으세요 (시트 저장용)
+// ★ 설정: Apps Script 배포 후 발급되는 '웹 앱 URL'을 아래에 붙여넣으세요!
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVOu-Doeld3CJ2_36_DE_H8_XABf9ogmfGLBYbBtA9VWDJyc9vDfOq3zYogTw1NKZa/exec";
 // ─────────────────────────────────────────────
 
@@ -447,7 +447,6 @@ function refresh() {
             '<div class="preview-tags">' + tagsHtml + '</div>';
     }
     
-    // 필수 조건 체크 (장소, 카테고리, 한줄평, 메뉴, 최소 1개 이상의 태그, 필수 개인정보 동의)
     const isPrivacyAgreed = $("privacy-agree").checked;
     $("submit-btn").disabled = !(state.place && state.category && $("review").value.trim() && $("menu").value.trim() && state.tags.length > 0 && isPrivacyAgreed);
 }
@@ -487,18 +486,16 @@ $("submit-btn").onclick = async () => {
         $("done").style.display = "block";
         window.scrollTo({ top: 0 });
     } catch (err) {
-        showError("제보 저장에 실패했어요. 잠시 후 다시 시도해주세요. (" + err.message + ")");
+        showError("제보 저장에 실패했어요. 앱스 스크립트 배포 설정(모든 사용자)을 다시 확인해 주세요! (" + err.message + ")");
         btn.disabled = false;
         btn.textContent = "제보하기 🚀";
     }
 };
 
-// 맛집 더 제보하기 (연속 데이터 입력 최적화)
 $("again-btn").onclick = () => {
     state.place = null; state.category = null; state.tags = []; state.price = null;
     allTags = [...PRESET_TAGS];
     
-    // 제보자 정보와 동의 내역은 초기화하지 않고 남겨둡니다.
     $("q").value = ""; 
     $("review").value = ""; 
     $("menu").value = ""; 
@@ -509,7 +506,6 @@ $("again-btn").onclick = () => {
     $("done").style.display = "none";
     $("form-area").style.display = "block";
     
-    // 필수값이 비워졌으므로 버튼은 비활성화 상태로 둡니다.
     $("submit-btn").disabled = true;
     $("submit-btn").textContent = "제보하기 🚀";
     window.scrollTo({ top: 0 });
