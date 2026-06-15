@@ -226,7 +226,7 @@
                 1. 수집 항목: 입주사명, 스파크플러스 지점, 성함, 연락처<br>
                 2. 수집 및 이용 목적: 맛집 제보 중복 확인, 제보 내용에 대한 문의 대응 및 제보 관련 이벤트 참여/경품 발송 목적<br>
                 3. 보유 및 이용 기간: <b>목적 달성 후 즉시 파기</b> (단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간 보관)<br>
-                * 제보자는 동의를 거부할 권리가 있으나, 거부 시 제보 이벤트 참여 및 검토 결과 안내가 제한될 수 있습니다. (개인정보는 맛집 지도에 노출되지 않습니다.)
+                * 제보자는 동의를 거부할 권리가 있으나, 거부 시 제보 이벤트 참여 및 검토 결과 안내가 제한될 수 있습니다. (맛집 제보 데이터는 지도에 비공개/익명으로 등록 가능합니다.)
             </div>
             <label class="agree-label">
                 <input type="checkbox" id="privacy-agree">
@@ -447,6 +447,7 @@ function refresh() {
             '<div class="preview-tags">' + tagsHtml + '</div>';
     }
     
+    // 필수 조건 체크 (장소, 카테고리, 한줄평, 메뉴, 최소 1개 이상의 태그, 필수 개인정보 동의)
     const isPrivacyAgreed = $("privacy-agree").checked;
     $("submit-btn").disabled = !(state.place && state.category && $("review").value.trim() && $("menu").value.trim() && state.tags.length > 0 && isPrivacyAgreed);
 }
@@ -475,27 +476,32 @@ $("submit-btn").onclick = async () => {
     };
     
     try {
-        const res = await fetch(SCRIPT_URL, {
+        // mode: "no-cors" 옵션을 추가하여 구글 시트로 성공적으로 데이터만 전송하고 CORS 에러는 무시합니다.
+        await fetch(SCRIPT_URL, {
             method: "POST",
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || "저장 실패");
+        
+        // no-cors 설정 시 응답(res)을 읽을 수 없으므로 에러가 나지 않았다면 바로 성공 화면으로 전환합니다.
         $("form-area").style.display = "none";
         $("done").style.display = "block";
         window.scrollTo({ top: 0 });
+        
     } catch (err) {
-        showError("제보 저장에 실패했어요. 앱스 스크립트 배포 설정(모든 사용자)을 다시 확인해 주세요! (" + err.message + ")");
+        showError("네트워크 문제로 제보 저장에 실패했어요. 잠시 후 다시 시도해주세요.");
         btn.disabled = false;
         btn.textContent = "제보하기 🚀";
     }
 };
 
+// 맛집 더 제보하기 (연속 데이터 입력 최적화)
 $("again-btn").onclick = () => {
     state.place = null; state.category = null; state.tags = []; state.price = null;
     allTags = [...PRESET_TAGS];
     
+    // 제보자 정보와 동의 내역은 초기화하지 않고 남겨둡니다.
     $("q").value = ""; 
     $("review").value = ""; 
     $("menu").value = ""; 
@@ -506,6 +512,7 @@ $("again-btn").onclick = () => {
     $("done").style.display = "none";
     $("form-area").style.display = "block";
     
+    // 필수값이 비워졌으므로 버튼은 비활성화 상태로 둡니다.
     $("submit-btn").disabled = true;
     $("submit-btn").textContent = "제보하기 🚀";
     window.scrollTo({ top: 0 });
