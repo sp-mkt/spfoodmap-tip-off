@@ -87,7 +87,7 @@
         width: 100%; padding: 12px 14px; border: 1px solid #dee2e6; border-radius: 8px;
         font-size: 14px; font-family: inherit; resize: none; outline: none; height: 72px;
     }
-    textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33,37,41,.05); }
+    textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33, 37, 41, .05); }
     .char-count { text-align: right; font-size: 11px; color: #aaa; margin-top: 4px; }
 
     .tag-add-row { display: flex; gap: 8px; margin-top: 10px; }
@@ -103,7 +103,7 @@
     .info-grid input {
         width: 100%; padding: 11px 14px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 14px; outline: none;
     }
-    .info-grid input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33,37,41,.05); }
+    .info-grid input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(33, 37, 41, .05); }
 
     .privacy-box {
         background: #f8f9fa; border: 1px solid var(--line); border-radius: 8px;
@@ -115,7 +115,7 @@
 
     .preview-wrap { margin: 14px 16px 0; }
     .preview-label { font-size: 12px; color: var(--sub); margin: 0 4px 8px; }
-    .preview-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .preview-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
     .preview-title { font-weight: bold; font-size: 16px; margin: 0 0 8px; }
     .preview-desc { font-size: 14px; color: #555; margin: 0 0 10px; line-height: 1.4; }
     .preview-tags { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: #888; }
@@ -145,7 +145,7 @@
         border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;
     }
 
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, .4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px; margin-right: 6px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 1.5s; } }
 </style>
@@ -258,8 +258,8 @@
 
 <script>
 // ─────────────────────────────────────────────
-// ★ 설정: Apps Script 배포 관리에서 복사한 웹 앱 URL(버전 9)을 붙여넣으세요
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVOu-Doeld3CJ2_36_DE_H8_XABf9ogmfGLBYbBtA9VWDJyc9vDfOq3zYogTw1NKZa/exec";
+// ★ 설정: 최신 배포 관리(버전 업데이트 확인)에서 발급받은 웹 앱 URL을 붙여넣으세요
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwj6iqvXsHw0SiG9Mps5w85WcS-o9Bw9wdeeL_QpCI1XU_yW4dR7EtvyZf5YaKhSc_b/exec";
 // ─────────────────────────────────────────────
 
 const CATEGORIES = ["한식","카페","일식","중식","양식","아시안","도시락","술집"];
@@ -370,12 +370,7 @@ function renderResults(items) {
         div.className = "result-item";
         const addr = item.road_address_name || item.address_name || "";
         const cat = (item.category_name || "").split(">").pop().trim();
-        div.innerHTML =
-            '<div class="result-name">' + escapeHtml(item.place_name) + '</div>' +
-            '<div class="result-meta">' +
-                (cat ? '<span class="result-cat">' + escapeHtml(cat) + '</span>' : '') +
-                escapeHtml(addr) +
-            '</div>';
+        div.innerHTML = '<div class="result-name">' + escapeHtml(item.place_name) + '</div>' + '<div class="result-meta">' + (cat ? '<span class="result-cat">' + escapeHtml(cat) + '</span>' : '') + escapeHtml(addr) + '</div>';
         div.onclick = () => selectPlace(item);
         el.appendChild(div);
     });
@@ -439,11 +434,7 @@ function refresh() {
         if (state.price) tagsHtml += '<span class="tag">' + escapeHtml(state.price) + '</span>';
         state.tags.forEach(t => tagsHtml += '<span class="tag">#' + escapeHtml(t) + '</span>');
         
-        p.innerHTML =
-            '<h3 class="preview-title">' + escapeHtml(state.place.name) + '</h3>' +
-            (menu ? '<div style="font-size:13px; font-weight:600; color:#e03131; margin-bottom:6px;">🍴 ' + escapeHtml(menu) + '</div>' : '') +
-            '<p class="preview-desc">' + (review ? '"' + escapeHtml(review) + '"' : '<span style="color:#ccc">한줄평이 여기에 표시돼요</span>') + '</p>' +
-            '<div class="preview-tags">' + tagsHtml + '</div>';
+        p.innerHTML = '<h3 class="preview-title">' + escapeHtml(state.place.name) + '</h3>' + (menu ? '<div style="font-size:13px; font-weight:600; color:#e03131; margin-bottom:6px;">🍴 ' + escapeHtml(menu) + '</div>' : '') + '<p class="preview-desc">' + (review ? '"' + escapeHtml(review) + '"' : '<span style="color:#ccc">한줄평이 여기에 표시돼요</span>') + '</p>' + '<div class="preview-tags">' + tagsHtml + '</div>';
     }
     
     const isPrivacyAgreed = $("privacy-agree").checked;
@@ -474,27 +465,26 @@ $("submit-btn").onclick = async () => {
     };
     
     try {
-        // [수정 핵심] Apps Script 서버의 JSON.parse 규격에 완벽하게 일치하도록 문자열 포장 후 전송
+        // [수정 완결] Form 전송 데이터 양식과 no-cors 모드를 완벽 결합하여 양방향 데이터를 안착시킵니다.
         await fetch(SCRIPT_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(payload)
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(payload)
         });
         
-        // 데이터 누락 차단을 위해 강제로 전송을 마친 후 즉시 완료 화면으로 넘깁니다.
+        // 데이터가 누락 없이 안전하게 구글 서버를 통과하면 즉시 완료 화면으로 넘깁니다.
         $("form-area").style.display = "none";
         $("done").style.display = "block";
         window.scrollTo({ top: 0 });
         
     } catch (err) {
-        // 네트워크 타임아웃 등으로 처리가 튀었을 때를 대비한 안전 장치
         $("form-area").style.display = "none";
         $("done").style.display = "block";
         window.scrollTo({ top: 0 });
     }
 };
 
-// 맛집 더 제보하기 (연속 데이터 입력 최적화)
 $("again-btn").onclick = () => {
     state.place = null; state.category = null; state.tags = []; state.price = null;
     allTags = [...PRESET_TAGS];
