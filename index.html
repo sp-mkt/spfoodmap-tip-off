@@ -437,7 +437,7 @@ $("submit-btn").onclick = async () => {
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> 제보 중...';
     hideError();
-    
+
     const payload = {
         name: state.place.name,
         category: state.category,
@@ -454,47 +454,26 @@ $("submit-btn").onclick = async () => {
         nickname: $("reporter-name").value.trim(),
         contact: $("contact").value.trim()
     };
-    
+
     try {
-        // [원상복구 핵심] 앱스 스크립트 서버의 JSON.parse 규격에 완벽 일치하도록 다시 JSON 문자열로 전송합니다.
-        await fetch(SCRIPT_URL, {
+        const res = await fetch(SCRIPT_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         });
-        
-        // 구글 서버에 데이터 도달을 보장하고, 브라우저 차단 에러와 상관없이 즉시 화면을 완료 처리합니다.
+        const text = await res.text();
+        alert("상태코드: " + res.status + "\n응답내용: " + text);   // ← 여기가 핵심
+
         $("form-area").style.display = "none";
         $("done").style.display = "block";
         window.scrollTo({ top: 0 });
-        
     } catch (err) {
-        // 브라우저가 응답을 차단하더라도 데이터는 이미 전송되었으므로 성공 페이지를 강제로 띄웁니다.
-        $("form-area").style.display = "none";
-        $("done").style.display = "block";
-        window.scrollTo({ top: 0 });
+        alert("fetch 에러: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = "제보하기 🚀";
     }
 };
-
-$("again-btn").onclick = () => {
-    state.place = null; state.category = null; state.tags = []; state.price = null;
-    allTags = [...PRESET_TAGS];
     
-    $("q").value = ""; 
-    $("review").value = ""; 
-    $("menu").value = ""; 
-    $("review-len").textContent = "0";
-    $("selected-banner").classList.remove("show");
-    
-    renderCats(); renderTags(); renderPrices(); refresh();
-    $("done").style.display = "none";
-    $("form-area").style.display = "block";
-    
-    $("submit-btn").disabled = true;
-    $("submit-btn").textContent = "제보하기 🚀";
-    window.scrollTo({ top: 0 });
-};
-
 function showError(msg) { const e = $("error-msg"); e.textContent = "⚠️ " + msg; e.style.display = "block"; }
 function hideError() { $("error-msg").style.display = "none"; }
 function escapeHtml(s) { return String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
